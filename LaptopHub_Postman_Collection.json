@@ -1,0 +1,330 @@
+{
+  "info": {
+    "name": "Laptop Hub API",
+    "description": "Complete API collection for Laptop Hub — Node.js + MySQL REST API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth Module",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        },
+        {
+          "name": "Signup — Regular User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/signup",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"user\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Signup — Admin User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/signup",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Super Admin\",\n  \"email\": \"admin@laptophub.com\",\n  \"password\": \"Admin@123\",\n  \"role\": \"admin\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login — Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "  pm.collectionVariables.set('token', res.token);",
+                  "  console.log('Token saved!');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@laptophub.com\",\n  \"password\": \"Admin@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login — User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/auth/profile"
+          }
+        },
+        {
+          "name": "Get All Users (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/auth/users"
+          }
+        },
+        {
+          "name": "Update User (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/auth/users/2",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"john@example.com\",\n  \"role\": \"user\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete User (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/auth/users/2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "💻 Laptops Module",
+      "item": [
+        {
+          "name": "Get All Laptops",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/laptops",
+              "host": ["{{baseUrl}}"],
+              "path": ["laptops"]
+            }
+          }
+        },
+        {
+          "name": "Search Laptops",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/laptops?search=macbook",
+              "query": [{ "key": "search", "value": "macbook" }]
+            }
+          }
+        },
+        {
+          "name": "Filter by Brand",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/laptops?brand=Apple",
+              "query": [{ "key": "brand", "value": "Apple" }]
+            }
+          }
+        },
+        {
+          "name": "Filter by Price Range",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/laptops?min_price=500&max_price=1500",
+              "query": [
+                { "key": "min_price", "value": "500" },
+                { "key": "max_price", "value": "1500" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Featured Laptops",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/laptops?featured=true",
+              "query": [{ "key": "featured", "value": "true" }]
+            }
+          }
+        },
+        {
+          "name": "Get Single Laptop",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/laptops/1"
+          }
+        },
+        {
+          "name": "Get All Brands",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/laptops/brands"
+          }
+        },
+        {
+          "name": "Create Laptop (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/laptops",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ASUS TUF Gaming F15\",\n  \"brand\": \"ASUS\",\n  \"price\": 1199.99,\n  \"image_url\": \"https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800\",\n  \"processor\": \"Intel Core i7-12700H\",\n  \"ram\": \"16GB DDR5\",\n  \"storage\": \"512GB PCIe SSD\",\n  \"display\": \"15.6\\\" FHD 144Hz IPS\",\n  \"graphics\": \"NVIDIA RTX 3060 6GB\",\n  \"battery\": \"9 hours\",\n  \"weight\": \"2.2 kg\",\n  \"os\": \"Windows 11 Home\",\n  \"description\": \"A powerful gaming laptop with military-grade durability.\",\n  \"stock\": 20,\n  \"is_featured\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Laptop (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/laptops/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MacBook Pro 16\\\" M3 Pro (Updated)\",\n  \"brand\": \"Apple\",\n  \"price\": 2299.99,\n  \"image_url\": \"https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800\",\n  \"processor\": \"Apple M3 Pro (12-core CPU)\",\n  \"ram\": \"18GB Unified Memory\",\n  \"storage\": \"1TB SSD\",\n  \"display\": \"16.2\\\" Liquid Retina XDR\",\n  \"graphics\": \"Apple M3 Pro 18-core GPU\",\n  \"battery\": \"22 hours\",\n  \"weight\": \"2.14 kg\",\n  \"os\": \"macOS Sonoma\",\n  \"description\": \"Updated version of the most powerful MacBook Pro.\",\n  \"stock\": 10,\n  \"is_featured\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Laptop (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/laptops/9"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛒 Cart Module",
+      "item": [
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/cart"
+          }
+        },
+        {
+          "name": "Add to Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/cart",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"laptop_id\": 1,\n  \"quantity\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Cart Item Quantity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/cart/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove Cart Item",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/cart/1"
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/cart/clear"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔒 Auth Error Tests",
+      "item": [
+        {
+          "name": "Access without token (should fail)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/laptops"
+          }
+        },
+        {
+          "name": "User tries admin route (should fail)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer USER_TOKEN_HERE" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/laptops",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test\",\n  \"brand\": \"Test\",\n  \"price\": 100\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
